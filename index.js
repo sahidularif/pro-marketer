@@ -14,10 +14,6 @@ app.get('/', (req, res) => {
     res.send('Hello World!')
 })
 
-
-
-
-
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.or4h7.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 client.connect(err => {
@@ -40,8 +36,6 @@ client.connect(err => {
             });
     });
 
-
-
     app.get('/userOrders', (req, res) => {
         // console.log(req.query.email)
         orderCollection
@@ -50,7 +44,6 @@ client.connect(err => {
                 res.send(documents);
             });
     });
-
 
     app.post('/addProduct', (req, res) => {
         const newProduct = req.body;
@@ -78,9 +71,16 @@ client.connect(err => {
             });
     });
 
+    // Delete Ptoduct from Admin Dashboard and mongoDB
+    app.delete('/deleteProduct/:_id', (req, res) => {
+        productCollection
+            .deleteOne({ _id: ObjectId(req.params._id) })
+            .then((result) => {
+                res.send(result.deletedCount > 0);
+            });
+    });
+
 });
-
-
 
 app.listen(port, () => {
     console.log(`http://localhost:${port}`)
